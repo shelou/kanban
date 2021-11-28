@@ -1,0 +1,4 @@
+export const sagaActions = {
+    FETCH_STORIES_SAGA: "FETCH_STORIES_SAGA",
+    FETCH_COLUMNS_SAGA: "FETCH_COLUMNS_SAGA",
+};
