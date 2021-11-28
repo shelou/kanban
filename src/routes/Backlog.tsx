@@ -105,7 +105,6 @@ export const Backlog = () => {
 
         const tempArray = [sourceColumn, destColumn];
         const newArray = columns.map(obj => tempArray.find(o => o.id === obj.id) || obj)
-        console.log("newArray:",newArray)
         dispatch(setAll(newArray))
     }
 

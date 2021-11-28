@@ -14,12 +14,8 @@ export default function Lists() {
     const {columns} = useAppSelector((state) => state.columns)
     const {stories} = useAppSelector((state) => state.stories)
     const [columnsData, setColumnsData] = useState(columns);
-    const [isEditOpen, setEditOpen] = useState(false);
-    const [selectedStoryId, setSelectedStoryId] = useState('');
 
     useEffect(() => {
-        console.log(columns)
-        console.log("columns has changed")
         setColumnsData(columns);
     }, [columns]);
 
