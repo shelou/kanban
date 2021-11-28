@@ -4,18 +4,22 @@ import {useEffect, useState} from "react";
 import * as _ from "lodash";
 import {Column} from "../components/Column";
 import {useAppSelector} from "../redux/hooks";
-import {StoryService} from "../services/story.service";
 import {columnObj} from "../data/columns";
-import {IStory} from "../data/stories";
 import {ColumnService} from "../services/column.service";
+import {EditStory} from "./EditStory";
 
 const columnsService = new ColumnService();
 
 export default function Lists() {
     const {columns} = useAppSelector((state) => state.columns)
+    const {stories} = useAppSelector((state) => state.stories)
     const [columnsData, setColumnsData] = useState(columns);
+    const [isEditOpen, setEditOpen] = useState(false);
+    const [selectedStoryId, setSelectedStoryId] = useState('');
 
     useEffect(() => {
+        console.log(columns)
+        console.log("columns has changed")
         setColumnsData(columns);
     }, [columns]);
 
@@ -89,13 +93,13 @@ export default function Lists() {
                     {!_.isEmpty(columnsData) ? (
                         <Grid container spacing={2}>
                             <Grid item xs={12} md={4}>
-                                <Column column={columnsService.getColumnByID("column_1",columnsData)} title={"To Do"}/>
+                                <Column column={columnsService.getColumnByID("column_1",columnsData)} stories={stories} title={"To Do"}/>
                             </Grid>
                             <Grid item xs={12} md={4}>
-                                <Column column={columnsService.getColumnByID("column_2",columnsData)} title={"In Progress"}/>
+                                <Column column={columnsService.getColumnByID("column_2",columnsData)} stories={stories} title={"In Progress"}/>
                             </Grid>
                             <Grid item xs={12} md={4}>
-                                <Column column={columnsService.getColumnByID("column_3",columnsData)} title={"Done"}/>
+                                <Column column={columnsService.getColumnByID("column_3",columnsData)} stories={stories} title={"Done"}/>
                             </Grid>
                         </Grid>
                     ) : (<></>)

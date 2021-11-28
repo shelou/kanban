@@ -9,10 +9,11 @@ interface Props{
         id: string,
         storyIds: Array<string>
     },
-    title: string
+    title: string,
+    stories: IStory[]
 }
 
-export const Column = ({column, title}: any) =>{
+export const Column = ({column, title,stories}: any) =>{
     return(
             <Droppable droppableId={column.id} key={column.id}>
                 {(provided, snapshot) => (
@@ -31,7 +32,7 @@ export const Column = ({column, title}: any) =>{
                         {provided.placeholder}
                         {column.storyIds.map(
                             ((item: string, index: any) => {
-                                let str: IStory | undefined = Stories.find((element, index, array) => {
+                                let str: IStory | undefined = stories.find((element : any) => {
                                         if (element.id === item) {
                                             return element;
                                         }

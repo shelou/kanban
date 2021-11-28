@@ -12,10 +12,8 @@ export class StoryService {
         const _id = `story-${uuidv4()}`;
         const newStory = {
             id: _id,
-            title: "To be moved to todo",
-            description: "Test",
-            assignedTo: "Maria",
-            // status: Status.BACKLOG
+            title: userData.title,
+            description: userData.description,
         }
 
         const newStories = _.cloneDeep(stories);
@@ -28,7 +26,6 @@ export class StoryService {
     }
 
     getStories() {
-        console.log("RETURNING STORIES", Stories)
         return Stories;
     }
 

@@ -5,7 +5,6 @@ import {ColumnService} from "../services/column.service";
 
 function* fetchColumns(): Generator<any, any, any> {
     try {
-        console.log("FETCHING COLUMNS")
         const columnService = new ColumnService();
         const columns = yield call(columnService.getColumns);
         yield put(setAll(columns));

@@ -1,6 +1,7 @@
 import {Avatar, Card, CardContent, CardHeader, Chip, Container, IconButton} from "@mui/material";
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import {Draggable} from "react-beautiful-dnd";
+import {useNavigate, useParams} from 'react-router-dom'
 
 import {IStory} from "../data/stories";
 
@@ -11,6 +12,11 @@ interface Props {
 }
 
 const StoryCard = ({id, index, story}: Props) => {
+    const navigate = useNavigate();
+    const onClick = () => {
+        navigate(`/stories/${id}`)
+    };
+
     return (
             <Container maxWidth="sm" key={id} style={{marginBottom:"15px"}}>
                 <Draggable draggableId={id} index={index}>
@@ -28,7 +34,7 @@ const StoryCard = ({id, index, story}: Props) => {
                                         </Avatar>
                                     }
                                     action={
-                                        <IconButton aria-label="settings">
+                                        <IconButton aria-label="settings" onClick={onClick}>
                                             <OpenInNewIcon />
                                         </IconButton>
                                     }

@@ -14,15 +14,17 @@ import {
 } from "@mui/material";
 import * as _ from "lodash";
 import React, {useEffect, useState} from "react";
-import {ArrowUpward, Assignment} from "@mui/icons-material";
+import {ArrowUpward, Assignment, Delete} from "@mui/icons-material";
 
 import {IStory} from "../data/stories";
 import {useAppDispatch, useAppSelector} from "../redux/hooks";
-import {StoryModal} from "../components/StoryModal";
+import {AddStoryModal} from "../components/AddStoryModal";
 import {StoryService} from "../services/story.service";
 import {setAll as setStories} from "../redux/reducers/storySlice";
 import {setAll} from "../redux/reducers/columnsSlice";
 import {ColumnService} from "../services/column.service";
+import {columnObj} from "../data/columns";
+import ConfirmDialog from "../components/ConfirmDialog";
 
 const storyService = new StoryService();
 const columnsService = new ColumnService();
@@ -33,9 +35,16 @@ export const Backlog = () => {
         return state.columns;
     })
     const {stories} = useAppSelector((state) => {
-        return state.stories})
+        return state.stories
+    })
     const [column, setColumn] = useState(columnsService.getColumnByID("column_0", columns));
     const [addDialogOpen, setAddDialogOpen] = useState(false);
+    const [dialogBtnClicked, setDialogBtnClicked] = useState(false);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [storyToDelete, setStoryToDelete] = useState({
+        storyId: '',
+        index: -1
+    })
 
     useEffect(() => {
         if (!_.isEmpty(columns))
@@ -44,6 +53,60 @@ export const Backlog = () => {
 
     const handleClose = () => {
         setAddDialogOpen(false);
+        setDeleteDialogOpen(false)
+    }
+
+    const handleDeleteClick = (_storyId: string, _index: any) => {
+        setDeleteDialogOpen(true);
+        setStoryToDelete({
+            storyId: _storyId,
+            index: _index
+        })
+    }
+
+    const deleteStory = () => {
+        setDialogBtnClicked(true);
+        let newStories = stories.filter(s => s.id !== storyToDelete.storyId)
+        dispatch(setStories(newStories));
+        const backlogColumn: columnObj | undefined = columnsService.getColumnByID("column_0", columns);
+        const storyIds: string[] = Object.values(backlogColumn?.storyIds || []);
+        storyIds.splice(storyToDelete.index, 1)
+        const sourceColumn: columnObj = {
+            id: "column_0",
+            title: backlogColumn?.title || '',
+            storyIds: storyIds
+        };
+        const tempArray = [sourceColumn];
+        const newArray = columns.map(obj => tempArray.find(o => o.id === obj.id) || obj)
+        dispatch(setAll(newArray))
+        setDeleteDialogOpen(false)
+    }
+
+    const moveToBoard = (storyId: string, index: any) => {
+        // move the story to to do column
+        const sourceColumnObj: columnObj | undefined = columnsService.getColumnByID("column_0", columns);
+        const destColumnObj: columnObj | undefined = columnsService.getColumnByID("column_1", columns);
+        const sourceStories: string[] = Object.values(sourceColumnObj?.storyIds || []);
+        let destinationStories: string[] = Object.values(destColumnObj?.storyIds || []);
+        destinationStories.splice(destinationStories.length, 0, storyId)
+        sourceStories.splice(index, 1)
+
+        const sourceColumn: columnObj = {
+            id: "column_0",
+            title: sourceColumnObj?.title || '',
+            storyIds: sourceStories
+        };
+
+        const destColumn: columnObj = {
+            id: "column_1",
+            title: destColumnObj?.title || '',
+            storyIds: destinationStories
+        };
+
+        const tempArray = [sourceColumn, destColumn];
+        const newArray = columns.map(obj => tempArray.find(o => o.id === obj.id) || obj)
+        console.log("newArray:",newArray)
+        dispatch(setAll(newArray))
     }
 
     const handleSave = ({title, description}: any) => {
@@ -68,6 +131,8 @@ export const Backlog = () => {
             console.log(e)
         }
     };
+
+
 
     const handleClickOpen = () => {
         setAddDialogOpen(true);
@@ -97,9 +162,7 @@ export const Backlog = () => {
                         <List>
                             {!_.isEmpty(column) && column?.storyIds.map(
                                 ((item: string, index: any) => {
-                                    console.log(stories)
                                     let _story: IStory | undefined = stories.find((element, index, array) => {
-                                            console.log(`${element.id} === ${item} ? ${element.id === item}`)
                                             if (element.id === item) {
                                                 return element;
                                             }
@@ -109,11 +172,18 @@ export const Backlog = () => {
                                         return (
                                             <> <ListItem
                                                 secondaryAction=
-                                                    {<Tooltip title="Move to Sprint">
-                                                        <IconButton edge="end" aria-label="delete">
+                                                    {<div><Tooltip title="Move to Board">
+                                                        <IconButton edge="end" aria-label="todo"
+                                                                    onClick={() => moveToBoard(_story?.id || '', index)}>
                                                             <ArrowUpward/>
                                                         </IconButton>
                                                     </Tooltip>
+                                                        <Tooltip title="Delete">
+                                                            <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteClick(_story?.id || '', index)}>
+                                                                <Delete/>
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                    </div>
                                                     }
                                             >
                                                 <
@@ -136,8 +206,11 @@ export const Backlog = () => {
                     </Grid>
 
                 </Grid>
-                <StoryModal title={"Create New Story"} open={addDialogOpen} handleClose={handleClose}
-                            handleSave={handleSave}/>
+                <AddStoryModal title={"Create New Story"} open={addDialogOpen} handleClose={handleClose}
+                               handleSave={handleSave}/>
+                <ConfirmDialog title={"Confirm Delete Account"} open={deleteDialogOpen} handleClose={handleClose}
+                               dialogContentText={"Are you sure you want to remove this item?"}
+                               handleConfirmation={deleteStory} btnClicked={dialogBtnClicked}/>
             </Box>
         </>
     )

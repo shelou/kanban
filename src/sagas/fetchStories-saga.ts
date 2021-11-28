@@ -5,7 +5,6 @@ import {StoryService} from "../services/story.service";
 
 function* fetchStories(): Generator<any, any, any> {
     try {
-        console.log("Fetching sotirs")
         const storyService = new StoryService();
         const stories = yield call(storyService.getStories);
         yield put(setAll(stories));

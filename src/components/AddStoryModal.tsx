@@ -16,7 +16,7 @@ interface MyFormValues {
     description: string
 }
 
-const StoryModal = ({open, title, handleClose, handleSave}: Props) => {
+const AddStoryModal = ({open, title, handleClose, handleSave}: Props) => {
 
     const initialValues: MyFormValues = {
         title: '',
@@ -70,4 +70,4 @@ const StoryModal = ({open, title, handleClose, handleSave}: Props) => {
     )
 }
 
-export {StoryModal}
+export {AddStoryModal}

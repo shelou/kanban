@@ -13,7 +13,6 @@ const storySlice = createSlice({
     initialState: initialState,
     reducers: {
         setAll: (state, action) => {
-            console.log("set all stories")
             state.stories = action.payload;
         },
     }

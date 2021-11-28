@@ -21,7 +21,7 @@ export default function LeftNavigation() {
             <Divider/>
             <List>
                 <ListItem button key={"Board"}>
-                    <ListItemLink primary={"Your Board"} to={"/lists"} />
+                    <ListItemLink primary={"Your Board"} to={"/"} />
                 </ListItem>
                 <ListItem button key={"Backlog"}>
                     <ListItemLink primary={"Backlog"} to={"/backlog"} />
