@@ -20,12 +20,8 @@ export default function LeftNavigation() {
             <Toolbar/>
             <Divider/>
             <List>
-                <ListItem button key={"Board"}>
                     <ListItemLink primary={"Your Board"} to={"/"} />
-                </ListItem>
-                <ListItem button key={"Backlog"}>
                     <ListItemLink primary={"Backlog"} to={"/backlog"} />
-                </ListItem>
             </List>
         </Drawer>
     );
